@@ -22,21 +22,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Gallery extends Fragment {
-    List<Video> videoList;
+    ArrayList<Video> videoList;
     private RecyclerView recyclerView;
+    private ListAdapter mAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)  {
         View rootView = inflater.inflate(R.layout.fragment_gallery, container, false);
         videoList = new ArrayList<>();
+        mAdapter = new ListAdapter(getActivity(), videoList);
         recyclerView = rootView.findViewById(R.id.list);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(new ListAdapter(getActivity(), videoList));
+        recyclerView.setAdapter(mAdapter);
         AddImagesUrlOnline();
         SearchView mSearchView = rootView.findViewById(R.id.search_bar);
-        mSearchView.setVisibility(View.GONE);
+        mSearchView.setIconified(false);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
         return rootView;
     }
 

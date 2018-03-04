@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,14 +17,16 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import java.util.List;
+
+import java.util.ArrayList;
 
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> {
-    private List<Video> videoList;
+public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> implements Filterable{
     private Context mcontext;
     private StorageReference storageReference;
     private String generatedFilePath;
+    private ArrayList<Video> mArrayList;
+    private ArrayList<Video> mFilteredList;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView thumbnail;
@@ -34,8 +38,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         }
     }
 
-    public ListAdapter(Context context, List<Video> videoList) {
-        this.videoList = videoList;
+    public ListAdapter(Context context, ArrayList<Video> videoList) {
+        this.mFilteredList = videoList;
+        this.mArrayList = videoList;
         mcontext = context;
         storageReference = FirebaseStorage.getInstance().getReference();
     }
@@ -49,7 +54,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-        final Video videoElement = videoList.get(position);
+        final Video videoElement = mFilteredList.get(position);
         holder.name.setText(videoElement.getName());
         GlideApp.with(mcontext)
                 .load(storageReference.child("Images").child(String.valueOf(position+1)).child("thumbnail.png"))
@@ -60,8 +65,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
                 storageReference.child("Videos").child(String.valueOf(position+1)).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        // Got the download URL for 'users/me/profile.png'
-                        generatedFilePath = uri.toString(); /// The string(file link) that you need
+                        generatedFilePath = uri.toString();
                         mcontext.startActivity(new Intent(mcontext, VideoPlayerActivity.class).putExtra("name",videoElement.getName()).putExtra("url", generatedFilePath).putExtra("value",position+1));
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -76,6 +80,36 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        return videoList.size();
+        return mFilteredList.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mFilteredList = mArrayList;
+                } else {
+                    ArrayList<Video> filteredList = new ArrayList<>();
+                    for (Video video : mArrayList) {
+                        if (video.getName().toLowerCase().contains(charString)) {
+                            filteredList.add(video);
+                        }
+                    }
+                    mFilteredList = filteredList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mFilteredList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mFilteredList = (ArrayList<Video>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }
