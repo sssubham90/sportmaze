@@ -20,33 +20,61 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="wrap_content"
-            android:layout_height="250dp"
+            android:layout_height="200dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true" />
 
         <me.relex.circleindicator.CircleIndicator
             android:id="@+id/indicator"
-            android:background="@color/colorGreen"
-            android:layout_below="@id/pager"
             android:layout_width="match_parent"
-            android:layout_height="50dp"/>
+            android:layout_height="40dp"
+            android:layout_alignBottom="@+id/pager"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center_vertical"
+        android:background="@color/colorGreen"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/image1"
+            android:layout_margin="4dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="80dp" />
+        <ImageView
+            android:id="@+id/image2"
+            android:layout_margin="4dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="80dp" />
+        <ImageView
+            android:id="@+id/image3"
+            android:layout_margin="4dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="80dp" />
+
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/more"
+        android:layout_margin="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go To Gallery"
-        android:textStyle="bold"
-        android:textColor="#1aab00"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"/>
+        android:text="Go To Gallery"
+        android:textColor="#1aab00"
+        android:textStyle="bold" />
 
 </LinearLayout>

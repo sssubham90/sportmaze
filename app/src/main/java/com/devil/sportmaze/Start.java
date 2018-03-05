@@ -8,12 +8,15 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,35 +28,20 @@ public class Start extends Fragment {
     private ViewPager mPager;
     private int currentPage=0,value;
     private SliderAdapter mAdapter;
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
+    private View rootView;
+    private StorageReference storageReference;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("Featured Video");
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                value= (int) dataSnapshot.getChildrenCount();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                value = 0;
-            }
-        });
-        View rootView = inflater.inflate(R.layout.fragment_start, container, false);
+        rootView = inflater.inflate(R.layout.fragment_start, container, false);
         rootView.findViewById(R.id.more).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity)getActivity()).goToGallery();
             }
         });
+        storageReference = FirebaseStorage.getInstance().getReference();
         CircleIndicator indicator = rootView.findViewById(R.id.indicator);
         mPager = rootView.findViewById(R.id.pager);
         mAdapter = new SliderAdapter(getActivity(),value);
@@ -77,12 +65,25 @@ public class Start extends Fragment {
                 handler.post(Update);
             }
         }, 2500, 2500);
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Video");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GlideApp.with(getActivity())
+                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue()!=null?dataSnapshot.child("0").getValue().toString():"").child("thumbnail.png"))
+                        .into((ImageView) rootView.findViewById(R.id.image1));
+                GlideApp.with(getActivity())
+                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue()!=null?dataSnapshot.child("1").getValue().toString():"").child("thumbnail.png"))
+                        .into((ImageView) rootView.findViewById(R.id.image2));
+                GlideApp.with(getActivity())
+                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue()!=null?dataSnapshot.child("2").getValue().toString():"").child("thumbnail.png"))
+                        .into((ImageView) rootView.findViewById(R.id.image3));
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
         return rootView;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
 }
