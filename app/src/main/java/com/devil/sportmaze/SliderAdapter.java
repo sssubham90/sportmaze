@@ -24,15 +24,20 @@ import com.google.firebase.storage.StorageReference;
 public class SliderAdapter extends PagerAdapter {
 
     private StorageReference storageReference;
+    private DatabaseReference databaseReference;
     private LayoutInflater inflater;
     private Context context;
     private int value;
     private String generatedFilePath;
     private String name;
+    private String key;
+    private ImageView myImage;
+    private int index;
 
     public SliderAdapter(Context context, int value) {
         this.context = context;
         storageReference = FirebaseStorage.getInstance().getReference();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Featured Videos");
         inflater = LayoutInflater.from(context);
         this.value = value;
     }
@@ -48,39 +53,49 @@ public class SliderAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(final ViewGroup view, final int position) {
-        final View myImageLayout = inflater.inflate(R.layout.slide, view, false);
-        ImageView myImage = myImageLayout.findViewById(R.id.image);
-        GlideApp.with(context)
-                .load(storageReference.child("Images").child(String.valueOf(position+1)).child("thumbnail.png"))
-                .into(myImage);
-        myImage.setOnClickListener(new View.OnClickListener() {
+    public Object instantiateItem(final ViewGroup view, int position) {
+        index = position;
+        View myImageLayout = inflater.inflate(R.layout.slide, view, false);
+        myImage = myImageLayout.findViewById(R.id.image);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                storageReference.child("Videos").child(String.valueOf(position+1)).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                key = dataSnapshot.child(String.valueOf(index)).getValue().toString();
+                GlideApp.with(context)
+                        .load(storageReference.child("Images").child(key).child("thumbnail.png"))
+                        .into(myImage);
+                myImage.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onSuccess(final Uri uri) {
-                        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Video");
-                        myRef.addValueEventListener(new ValueEventListener() {
+                    public void onClick(View view) {
+                        storageReference.child("Videos").child(key).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                name = dataSnapshot.child(String.valueOf(position+1)).child("Name").getValue().toString();
-                                generatedFilePath = uri.toString(); /// The string(file link) that you need
-                                context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("url", generatedFilePath).putExtra("name",name).putExtra("value",position+1));
-                            }
+                            public void onSuccess(final Uri uri) {
+                                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Video");
+                                myRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        name = dataSnapshot.child(key).child("Name").getValue().toString();
+                                        generatedFilePath = uri.toString(); /// The string(file link) that you need
+                                        context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("url", generatedFilePath).putExtra("name",name).putExtra("value",key));
+                                    }
 
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        Log.w("sm", "Failed to read value.", error.toException());
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
                             @Override
-                            public void onCancelled(DatabaseError error) {
-                                Log.w("sm", "Failed to read value.", error.toException());
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle any errors
                             }
                         });
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle any errors
-                    }
                 });
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
         view.addView(myImageLayout, 0);

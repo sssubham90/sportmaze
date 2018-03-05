@@ -35,7 +35,7 @@ public class Start extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("Video");
+        final DatabaseReference myRef = database.getReference("Featured Video");
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -44,10 +44,9 @@ public class Start extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                value = 10;
+                value = 0;
             }
         });
-        if(value>10) value = 10;
         View rootView = inflater.inflate(R.layout.fragment_start, container, false);
         rootView.findViewById(R.id.more).setOnClickListener(new View.OnClickListener() {
             @Override
