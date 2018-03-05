@@ -9,6 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,7 +23,7 @@ import me.relex.circleindicator.CircleIndicator;
 public class Start extends Fragment {
 
     private ViewPager mPager;
-    private int currentPage=0,value = 2;
+    private int currentPage=0,value;
     private SliderAdapter mAdapter;
 
     @Override
@@ -28,6 +34,20 @@ public class Start extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference("Video");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                value= (int) dataSnapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                value = 10;
+            }
+        });
+        if(value>10) value = 10;
         View rootView = inflater.inflate(R.layout.fragment_start, container, false);
         rootView.findViewById(R.id.more).setOnClickListener(new View.OnClickListener() {
             @Override
