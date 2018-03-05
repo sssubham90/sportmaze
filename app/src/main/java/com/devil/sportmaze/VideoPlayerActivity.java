@@ -16,7 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class VideoPlayerActivity extends AppCompatActivity {
 
     private VideoView videoView;
-    private int value;
+    String key;
     FirebaseUser user;
 
     @Override
@@ -29,7 +29,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         url = getIntent().getStringExtra("url");
         name = getIntent().getStringExtra("name");
-        value = getIntent().getIntExtra("value",0);
+        key = getIntent().getStringExtra("key");
         ((TextView)findViewById(R.id.head)).setText(name);
         videoView = findViewById(R.id.myVideo);
         videoView.setVideoURI(Uri.parse(url));
@@ -55,7 +55,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         String msg = getTime(videoView.getCurrentPosition())+"/"+getTime(videoView.getDuration());
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Video");
-        myRef.child(String.valueOf(value)).child("Viewers").child(user.getDisplayName()).setValue(msg);
+        myRef.child(key).child("Viewers").child(user.getDisplayName()).setValue(msg);
         finish();
     }
 }

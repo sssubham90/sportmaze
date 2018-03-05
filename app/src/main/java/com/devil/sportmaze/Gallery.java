@@ -60,7 +60,7 @@ public class Gallery extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()){
-                    videoList.add(new Video(childDataSnapshot.child("Name").getValue().toString(), childDataSnapshot.child("URL").getValue().toString(), childDataSnapshot.child("Image URL").getValue().toString()));
+                    videoList.add(new Video(childDataSnapshot.child("Name").getValue().toString(), childDataSnapshot.child("URL").getValue().toString(), childDataSnapshot.child("Image URL").getValue().toString(), childDataSnapshot.getKey()));
                     recyclerView.getAdapter().notifyItemInserted(videoList.size());
                 }
             }

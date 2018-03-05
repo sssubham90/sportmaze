@@ -57,16 +57,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         final Video videoElement = mFilteredList.get(position);
         holder.name.setText(videoElement.getName());
         GlideApp.with(mcontext)
-                .load(storageReference.child("Images").child(String.valueOf(position+1)).child("thumbnail.png"))
+                .load(storageReference.child("Images").child(videoElement.getKey()).child("thumbnail.png"))
                 .into(holder.thumbnail);
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                storageReference.child("Videos").child(String.valueOf(position+1)).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                storageReference.child("Videos").child(videoElement.getKey()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         generatedFilePath = uri.toString();
-                        mcontext.startActivity(new Intent(mcontext, VideoPlayerActivity.class).putExtra("name",videoElement.getName()).putExtra("url", generatedFilePath).putExtra("value",position+1));
+                        mcontext.startActivity(new Intent(mcontext, VideoPlayerActivity.class).putExtra("name",videoElement.getName()).putExtra("url", generatedFilePath).putExtra("key",videoElement.getKey()));
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
