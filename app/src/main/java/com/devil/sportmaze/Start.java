@@ -73,10 +73,10 @@ public class Start extends Fragment {
                         .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue()!=null?dataSnapshot.child("0").getValue().toString():"").child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image1));
                 GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue()!=null?dataSnapshot.child("1").getValue().toString():"").child("thumbnail.png"))
+                        .load(storageReference.child("Images").child(dataSnapshot.child("1").getValue()!=null?dataSnapshot.child("1").getValue().toString():"").child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image2));
                 GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue()!=null?dataSnapshot.child("2").getValue().toString():"").child("thumbnail.png"))
+                        .load(storageReference.child("Images").child(dataSnapshot.child("2").getValue()!=null?dataSnapshot.child("2").getValue().toString():"").child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image3));
             }
             @Override
