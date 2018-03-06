@@ -66,7 +66,7 @@ public class Start extends Fragment {
             }
         }, 2500, 2500);
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Video");
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 GlideApp.with(getActivity())
