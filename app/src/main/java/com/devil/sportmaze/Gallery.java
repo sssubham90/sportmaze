@@ -36,7 +36,6 @@ public class Gallery extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
-        AddImagesUrlOnline();
         SearchView mSearchView = rootView.findViewById(R.id.search_bar);
         mSearchView.setIconified(false);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -51,24 +50,21 @@ public class Gallery extends Fragment {
                 return true;
             }
         });
-        return rootView;
-    }
-
-    public void AddImagesUrlOnline(){
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Video");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()){
-                    videoList.add(new Video(childDataSnapshot.child("Name").getValue().toString(), childDataSnapshot.child("URL").getValue().toString(), childDataSnapshot.child("Image URL").getValue().toString(), childDataSnapshot.getKey()));
-                    recyclerView.getAdapter().notifyItemInserted(videoList.size());
+                for(DataSnapshot childSnapshot : dataSnapshot.getChildren()){
+                    videoList.add(new Video(childSnapshot.child("Name").getValue()!=null?childSnapshot.child("Name").getValue().toString():"",childSnapshot.getKey()));
+                    mAdapter.notifyItemInserted(videoList.size());
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError error) {
+                // Failed to read value
                 Log.w("sm", "Failed to read value.", error.toException());
             }
         });
+        return rootView;
     }
 }

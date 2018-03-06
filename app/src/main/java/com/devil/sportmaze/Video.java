@@ -1,15 +1,7 @@
 package com.devil.sportmaze;
 
 public class Video {
-    private String URL, name, ImageURL ,key;
-
-    public String getImageURL() {
-        return ImageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        ImageURL = imageURL;
-    }
+    private String name, key;
 
     public String getKey() {
         return key;
@@ -19,20 +11,9 @@ public class Video {
         this.key = key;
     }
 
-    public Video(String name, String URL, String ImageURL, String key) {
-        this.URL = URL;
+    public Video(String name, String key) {
         this.name = name;
-        this.ImageURL = ImageURL;
         this.key = key;
-
-    }
-
-    public String getURL() {
-        return URL;
-    }
-
-    public void setURL(String URL) {
-        this.URL = URL;
     }
 
     public String getName() {
