@@ -10,7 +10,7 @@
         android:id="@+id/search_bar"
         android:layout_margin="8dp"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/border"/>
 
     <android.support.v7.widget.RecyclerView

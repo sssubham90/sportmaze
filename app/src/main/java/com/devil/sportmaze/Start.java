@@ -30,6 +30,7 @@ public class Start extends Fragment {
     private SliderAdapter mAdapter;
     private View rootView;
     private StorageReference storageReference;
+    private CircleIndicator indicator;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -41,11 +42,35 @@ public class Start extends Fragment {
                 ((MainActivity)getActivity()).goToGallery();
             }
         });
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Video");
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Videos");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 value = (int) dataSnapshot.getChildrenCount();
+                storageReference = FirebaseStorage.getInstance().getReference();
+                indicator = rootView.findViewById(R.id.indicator);
+                mPager = rootView.findViewById(R.id.pager);
+                mAdapter = new SliderAdapter(getActivity(),value);
+                mPager.setAdapter(mAdapter);
+                indicator.setViewPager(mPager);
+
+                // Auto start of viewpager
+                final Handler handler = new Handler();
+                final Runnable Update = new Runnable() {
+                    public void run() {
+                        if (currentPage == value) {
+                            mPager.setCurrentItem(currentPage=0, false);
+                        }
+                        mPager.setCurrentItem(currentPage++, true);
+                    }
+                };
+                Timer swipeTimer = new Timer();
+                swipeTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        handler.post(Update);
+                    }
+                }, 2500, 2500);
             }
 
             @Override
@@ -53,41 +78,20 @@ public class Start extends Fragment {
 
             }
         });
-        storageReference = FirebaseStorage.getInstance().getReference();
-        CircleIndicator indicator = rootView.findViewById(R.id.indicator);
-        mPager = rootView.findViewById(R.id.pager);
-        mAdapter = new SliderAdapter(getActivity(),value);
-        mPager.setAdapter(mAdapter);
-        indicator.setViewPager(mPager);
-
-        // Auto start of viewpager
-        final Handler handler = new Handler();
-        final Runnable Update = new Runnable() {
-            public void run() {
-                if (currentPage == value) {
-                    mPager.setCurrentItem(currentPage=0, false);
-                }
-                mPager.setCurrentItem(currentPage++, true);
-            }
-        };
-        Timer swipeTimer = new Timer();
-        swipeTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(Update);
-            }
-        }, 2500, 2500);
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("0").getValue()!=null)
                 GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue()!=null?dataSnapshot.child("0").getValue().toString():"").child("thumbnail.png"))
+                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image1));
+                if(dataSnapshot.child("1").getValue()!=null)
                 GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("1").getValue()!=null?dataSnapshot.child("1").getValue().toString():"").child("thumbnail.png"))
+                        .load(storageReference.child("Images").child(dataSnapshot.child("1").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image2));
+                if(dataSnapshot.child("2").getValue()!=null)
                 GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("2").getValue()!=null?dataSnapshot.child("2").getValue().toString():"").child("thumbnail.png"))
+                        .load(storageReference.child("Images").child(dataSnapshot.child("2").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image3));
             }
             @Override

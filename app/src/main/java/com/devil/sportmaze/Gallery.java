@@ -51,7 +51,7 @@ public class Gallery extends Fragment {
             }
         });
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Video");
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot childSnapshot : dataSnapshot.getChildren()){
