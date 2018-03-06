@@ -1,5 +1,7 @@
 package com.devil.sportmaze;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +34,7 @@ public class Start extends Fragment {
     private View rootView;
     private StorageReference storageReference;
     private CircleIndicator indicator;
+    private String generatedFilePath;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -42,7 +46,7 @@ public class Start extends Fragment {
                 ((MainActivity)getActivity()).goToGallery();
             }
         });
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Videos");
+        final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Videos");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -80,19 +84,58 @@ public class Start extends Fragment {
         });
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child("0").getValue()!=null)
-                GlideApp.with(getActivity())
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("0").getValue()!=null){
+                    GlideApp.with(getActivity())
                         .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image1));
-                if(dataSnapshot.child("1").getValue()!=null)
-                GlideApp.with(getActivity())
+                    rootView.findViewById(R.id.image1).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            storageReference.child("Videos").child(dataSnapshot.child("0").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    generatedFilePath = uri.toString();
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("0").getValue().toString()));
+                                }
+                            });
+                        }
+                });
+                }
+                if(dataSnapshot.child("1").getValue()!=null){
+                    GlideApp.with(getActivity())
                         .load(storageReference.child("Images").child(dataSnapshot.child("1").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image2));
-                if(dataSnapshot.child("2").getValue()!=null)
-                GlideApp.with(getActivity())
+                    rootView.findViewById(R.id.image2).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            storageReference.child("Videos").child(dataSnapshot.child("1").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    generatedFilePath = uri.toString();
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("1").getValue().toString()));
+                                }
+                            });
+                        }
+                    });
+                }
+                if(dataSnapshot.child("2").getValue()!=null){
+                    GlideApp.with(getActivity())
                         .load(storageReference.child("Images").child(dataSnapshot.child("2").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image3));
+                    rootView.findViewById(R.id.image3).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            storageReference.child("Videos").child(dataSnapshot.child("2").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    generatedFilePath = uri.toString();
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("2").getValue().toString()));
+                                }
+                            });
+                        }
+                    });
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
