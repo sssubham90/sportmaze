@@ -41,6 +41,18 @@ public class Start extends Fragment {
                 ((MainActivity)getActivity()).goToGallery();
             }
         });
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Video");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                value = (int) dataSnapshot.getChildrenCount();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         storageReference = FirebaseStorage.getInstance().getReference();
         CircleIndicator indicator = rootView.findViewById(R.id.indicator);
         mPager = rootView.findViewById(R.id.pager);
@@ -65,7 +77,6 @@ public class Start extends Fragment {
                 handler.post(Update);
             }
         }, 2500, 2500);
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Video");
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
