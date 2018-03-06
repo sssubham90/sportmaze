@@ -32,7 +32,6 @@ public class SliderAdapter extends PagerAdapter {
     private String name;
     private String key;
     private ImageView myImage;
-    private int index;
 
     public SliderAdapter(Context context, int value) {
         this.context = context;
@@ -53,14 +52,14 @@ public class SliderAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(final ViewGroup view, int position) {
-        index = position;
+    public Object instantiateItem(final ViewGroup view, final int position) {
         View myImageLayout = inflater.inflate(R.layout.slide, view, false);
         myImage = myImageLayout.findViewById(R.id.image);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                key = dataSnapshot.child(String.valueOf(index)).getValue().toString();
+                Log.d("t0ttt",String.valueOf(position));
+                key = dataSnapshot.child(String.valueOf(position)).getValue().toString();
                 GlideApp.with(context)
                         .load(storageReference.child("Images").child(key).child("thumbnail.png"))
                         .into(myImage);
@@ -98,7 +97,7 @@ public class SliderAdapter extends PagerAdapter {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        view.addView(myImageLayout, 0);
+        view.addView(myImageLayout);
         return myImageLayout;
     }
 
