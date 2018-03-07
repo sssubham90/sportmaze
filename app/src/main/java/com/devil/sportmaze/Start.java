@@ -1,5 +1,6 @@
 package com.devil.sportmaze;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
@@ -35,6 +36,7 @@ public class Start extends Fragment {
     private StorageReference storageReference;
     private CircleIndicator indicator;
     private String generatedFilePath;
+    private ProgressDialog dialog;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -92,9 +94,16 @@ public class Start extends Fragment {
                     rootView.findViewById(R.id.image1).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            dialog = new ProgressDialog(getActivity());
+                            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            dialog.setMessage("Loading. Please wait...");
+                            dialog.setIndeterminate(true);
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
                             storageReference.child("Videos").child(dataSnapshot.child("0").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
+                                    dialog.dismiss();
                                     generatedFilePath = uri.toString();
                                     getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("0").getValue().toString()));
                                 }
@@ -109,10 +118,17 @@ public class Start extends Fragment {
                     rootView.findViewById(R.id.image2).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            dialog = new ProgressDialog(getActivity());
+                            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            dialog.setMessage("Loading. Please wait...");
+                            dialog.setIndeterminate(true);
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
                             storageReference.child("Videos").child(dataSnapshot.child("1").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     generatedFilePath = uri.toString();
+                                    dialog.dismiss();
                                     getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("1").getValue().toString()));
                                 }
                             });
@@ -126,10 +142,17 @@ public class Start extends Fragment {
                     rootView.findViewById(R.id.image3).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            dialog = new ProgressDialog(getActivity());
+                            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            dialog.setMessage("Loading. Please wait...");
+                            dialog.setIndeterminate(true);
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
                             storageReference.child("Videos").child(dataSnapshot.child("2").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     generatedFilePath = uri.toString();
+                                    dialog.dismiss();
                                     getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("2").getValue().toString()));
                                 }
                             });

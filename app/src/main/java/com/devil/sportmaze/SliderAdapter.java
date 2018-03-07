@@ -1,5 +1,6 @@
 package com.devil.sportmaze;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,6 +33,7 @@ public class SliderAdapter extends PagerAdapter {
     private String name;
     private String key;
     private ImageView myImage;
+    private ProgressDialog dialog;
 
     public SliderAdapter(Context context, int value) {
         this.context = context;
@@ -67,6 +69,12 @@ public class SliderAdapter extends PagerAdapter {
                 myImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        dialog = new ProgressDialog(context);
+                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        dialog.setMessage("Loading. Please wait...");
+                        dialog.setIndeterminate(true);
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.show();
                         storageReference.child("Videos").child(key).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(final Uri uri) {
@@ -76,6 +84,7 @@ public class SliderAdapter extends PagerAdapter {
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         name = dataSnapshot.child(key).child("Name").getValue().toString();
                                         generatedFilePath = uri.toString(); /// The string(file link) that you need
+                                        dialog.dismiss();
                                         context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("url", generatedFilePath).putExtra("name",name).putExtra("key",key));
                                     }
 

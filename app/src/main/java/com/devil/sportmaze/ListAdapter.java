@@ -1,5 +1,6 @@
 package com.devil.sportmaze;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,6 +28,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
     private String generatedFilePath;
     private ArrayList<Video> mArrayList;
     private ArrayList<Video> mFilteredList;
+    private ProgressDialog dialog;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView thumbnail;
@@ -62,10 +64,17 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
         holder.thumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialog = new ProgressDialog(mcontext);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setMessage("Loading. Please wait...");
+                dialog.setIndeterminate(true);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
                 storageReference.child("Videos").child(videoElement.getKey()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         generatedFilePath = uri.toString();
+                        dialog.dismiss();
                         mcontext.startActivity(new Intent(mcontext, VideoPlayerActivity.class).putExtra("name",videoElement.getName()).putExtra("url", generatedFilePath).putExtra("key",videoElement.getKey()));
                     }
                 }).addOnFailureListener(new OnFailureListener() {
