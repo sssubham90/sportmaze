@@ -55,7 +55,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         String msg = getTime(videoView.getCurrentPosition())+"/"+getTime(videoView.getDuration());
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("Video");
-        myRef.child(key).child("Viewers").child(user.getDisplayName()).setValue(msg);
+        if(user.getDisplayName()!=null)
+            myRef.child(key).child("Viewers").child(user.getDisplayName()).setValue(msg);
         finish();
     }
 }

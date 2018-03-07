@@ -51,8 +51,9 @@ public class SliderAdapter extends PagerAdapter {
         return value;
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(final ViewGroup view, final int position) {
+    public Object instantiateItem(@NonNull ViewGroup view, final int position) {
         View myImageLayout = inflater.inflate(R.layout.slide, view, false);
         myImage = myImageLayout.findViewById(R.id.image);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -75,7 +76,7 @@ public class SliderAdapter extends PagerAdapter {
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         name = dataSnapshot.child(key).child("Name").getValue().toString();
                                         generatedFilePath = uri.toString(); /// The string(file link) that you need
-                                        context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("url", generatedFilePath).putExtra("name",name).putExtra("value",key));
+                                        context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("url", generatedFilePath).putExtra("name",name).putExtra("key",key));
                                     }
 
                                     @Override
@@ -97,7 +98,7 @@ public class SliderAdapter extends PagerAdapter {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        view.addView(myImageLayout);
+        view.addView(myImageLayout,position);
         return myImageLayout;
     }
 
