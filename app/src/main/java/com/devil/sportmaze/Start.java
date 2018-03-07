@@ -39,6 +39,9 @@ public class Start extends Fragment {
     private CircleIndicator indicator;
     private String generatedFilePath;
     private ProgressDialog dialog;
+    private ImageView[] imageViews;
+    private TextView[] textViews;
+    private String key;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -50,12 +53,12 @@ public class Start extends Fragment {
                 ((MainActivity)getActivity()).goToGallery();
             }
         });
+        storageReference = FirebaseStorage.getInstance().getReference();
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Videos");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 value = (int) dataSnapshot.getChildrenCount();
-                storageReference = FirebaseStorage.getInstance().getReference();
                 indicator = rootView.findViewById(R.id.indicator);
                 mPager = rootView.findViewById(R.id.pager);
                 mAdapter = new SliderAdapter(getActivity(),value);
@@ -86,23 +89,26 @@ public class Start extends Fragment {
 
             }
         });
-        myRef.addValueEventListener(new ValueEventListener() {
+        textViews = new TextView[3];
+        imageViews = new ImageView[3];
+        imageViews[0] = rootView.findViewById(R.id.image1);
+        textViews[0] = rootView.findViewById(R.id.text1);
+        imageViews[1] = rootView.findViewById(R.id.image2);
+        textViews[1] = rootView.findViewById(R.id.text2);
+        imageViews[2] = rootView.findViewById(R.id.image3);
+        textViews[2] = rootView.findViewById(R.id.text3);
+        FirebaseDatabase.getInstance().getReference("Video").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child("0").getValue()!=null){
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int i = 0;
+                for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
+                    if(i==3) break;
+                    key = childSnapshot.getKey();
                     GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue().toString()).child("thumbnail.png"))
-                        .into((ImageView) rootView.findViewById(R.id.image1));
-                    FirebaseDatabase.getInstance().getReference("Video/"+dataSnapshot.child("0").getValue().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            ((TextView)rootView.findViewById(R.id.text1)).setText(dataSnapshot.child("Name").getValue().toString());
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
-                    rootView.findViewById(R.id.image1).setOnClickListener(new View.OnClickListener() {
+                            .load(storageReference.child("Images").child(key).child("thumbnail.png"))
+                            .into(imageViews[i]);
+                    textViews[i].setText(childSnapshot.child("Name").getValue().toString());
+                    imageViews[i].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             dialog = new ProgressDialog(getActivity());
@@ -111,85 +117,22 @@ public class Start extends Fragment {
                             dialog.setIndeterminate(true);
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.show();
-                            storageReference.child("Videos").child(dataSnapshot.child("0").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    dialog.dismiss();
-                                    generatedFilePath = uri.toString();
-                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", ((TextView)rootView.findViewById(R.id.text1)).getText()).putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("0").getValue().toString()));
-                                }
-                            });
-                        }
-                });
-                }
-                if(dataSnapshot.child("1").getValue()!=null){
-                    GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("1").getValue().toString()).child("thumbnail.png"))
-                        .into((ImageView) rootView.findViewById(R.id.image2));
-                    FirebaseDatabase.getInstance().getReference("Video/"+dataSnapshot.child("1").getValue().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            ((TextView)rootView.findViewById(R.id.text2)).setText(dataSnapshot.child("Name").getValue().toString());
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
-                    rootView.findViewById(R.id.image2).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog = new ProgressDialog(getActivity());
-                            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                            dialog.setMessage("Loading. Please wait...");
-                            dialog.setIndeterminate(true);
-                            dialog.setCanceledOnTouchOutside(false);
-                            dialog.show();
-                            storageReference.child("Videos").child(dataSnapshot.child("1").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            storageReference.child("Videos").child(key).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     generatedFilePath = uri.toString();
                                     dialog.dismiss();
-                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", ((TextView)rootView.findViewById(R.id.text2)).getText()).putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("1").getValue().toString()));
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", key));
                                 }
                             });
                         }
                     });
-                }
-                if(dataSnapshot.child("2").getValue()!=null){
-                    GlideApp.with(getActivity())
-                        .load(storageReference.child("Images").child(dataSnapshot.child("2").getValue().toString()).child("thumbnail.png"))
-                        .into((ImageView) rootView.findViewById(R.id.image3));
-                    FirebaseDatabase.getInstance().getReference("Video/"+dataSnapshot.child("2").getValue().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            ((TextView)rootView.findViewById(R.id.text3)).setText(dataSnapshot.child("Name").getValue().toString());
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });rootView.findViewById(R.id.image3).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            dialog = new ProgressDialog(getActivity());
-                            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                            dialog.setMessage("Loading. Please wait...");
-                            dialog.setIndeterminate(true);
-                            dialog.setCanceledOnTouchOutside(false);
-                            dialog.show();
-                            storageReference.child("Videos").child(dataSnapshot.child("2").getValue().toString()).child("video.mp4").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    generatedFilePath = uri.toString();
-                                    dialog.dismiss();
-                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", ((TextView)rootView.findViewById(R.id.text3)).getText()).putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("2").getValue().toString()));
-                                }
-                            });
-                        }
-                    });
+                    i++;
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
             }
         });
         return rootView;
