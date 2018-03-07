@@ -32,7 +32,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         url = getIntent().getStringExtra("url");
         name = getIntent().getStringExtra("name");
         key = getIntent().getStringExtra("key");
-        ((TextView)findViewById(R.id.head)).setText(name);
         videoView = findViewById(R.id.myVideo);
         videoView.setVideoURI(Uri.parse(url));
         MediaController mediaController = new MediaController(this);
