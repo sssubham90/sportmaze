@@ -103,7 +103,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.MyViewHolder> 
                 } else {
                     ArrayList<Video> filteredList = new ArrayList<>();
                     for (Video video : mArrayList) {
-                        if (video.getName().toLowerCase().contains(charString)) {
+                        if (video.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(video);
                         }
                     }
