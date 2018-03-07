@@ -8,10 +8,12 @@ import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -48,7 +50,7 @@ public class Start extends Fragment {
                 ((MainActivity)getActivity()).goToGallery();
             }
         });
-        final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Videos");
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Featured Videos");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -91,6 +93,15 @@ public class Start extends Fragment {
                     GlideApp.with(getActivity())
                         .load(storageReference.child("Images").child(dataSnapshot.child("0").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image1));
+                    FirebaseDatabase.getInstance().getReference("Video/"+dataSnapshot.child("0").getValue().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            ((TextView)rootView.findViewById(R.id.text1)).setText(dataSnapshot.child("Name").getValue().toString());
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
                     rootView.findViewById(R.id.image1).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -115,6 +126,15 @@ public class Start extends Fragment {
                     GlideApp.with(getActivity())
                         .load(storageReference.child("Images").child(dataSnapshot.child("1").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image2));
+                    FirebaseDatabase.getInstance().getReference("Video/"+dataSnapshot.child("1").getValue().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            ((TextView)rootView.findViewById(R.id.text2)).setText(dataSnapshot.child("Name").getValue().toString());
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
                     rootView.findViewById(R.id.image2).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -139,7 +159,15 @@ public class Start extends Fragment {
                     GlideApp.with(getActivity())
                         .load(storageReference.child("Images").child(dataSnapshot.child("2").getValue().toString()).child("thumbnail.png"))
                         .into((ImageView) rootView.findViewById(R.id.image3));
-                    rootView.findViewById(R.id.image3).setOnClickListener(new View.OnClickListener() {
+                    FirebaseDatabase.getInstance().getReference("Video/"+dataSnapshot.child("2").getValue().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            ((TextView)rootView.findViewById(R.id.text3)).setText(dataSnapshot.child("Name").getValue().toString());
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });rootView.findViewById(R.id.image3).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             dialog = new ProgressDialog(getActivity());
