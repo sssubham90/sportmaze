@@ -41,7 +41,6 @@ public class Start extends Fragment {
     private ProgressDialog dialog;
     private ImageView[] imageViews;
     private TextView[] textViews;
-    private String key;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -103,7 +102,7 @@ public class Start extends Fragment {
                 int i = 0;
                 for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
                     if(i==3) break;
-                    key = childSnapshot.getKey();
+                    final String key = childSnapshot.getKey();
                     GlideApp.with(getActivity())
                             .load(storageReference.child("Images").child(key).child("thumbnail.png"))
                             .into(imageViews[i]);
