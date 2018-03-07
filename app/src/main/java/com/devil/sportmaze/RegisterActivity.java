@@ -46,15 +46,18 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        dialog.dismiss();
                                         // Sign in success, update UI with the signed-in user's information
                                         Log.d("sm", "createUserWithEmail:success");
                                         FirebaseUser user = mAuth.getCurrentUser();
                                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                                     .setDisplayName(name).build();
-                                        user.updateProfile(profileUpdates);
-                                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                        startActivity(intent);
+                                        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                dialog.dismiss();
+                                                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                            }
+                                        });
                                     }
                                     else {
                                         dialog.dismiss();
