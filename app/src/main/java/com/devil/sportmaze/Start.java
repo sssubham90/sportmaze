@@ -116,7 +116,7 @@ public class Start extends Fragment {
                                 public void onSuccess(Uri uri) {
                                     dialog.dismiss();
                                     generatedFilePath = uri.toString();
-                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("0").getValue().toString()));
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", ((TextView)rootView.findViewById(R.id.text1)).getText()).putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("0").getValue().toString()));
                                 }
                             });
                         }
@@ -149,7 +149,7 @@ public class Start extends Fragment {
                                 public void onSuccess(Uri uri) {
                                     generatedFilePath = uri.toString();
                                     dialog.dismiss();
-                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("1").getValue().toString()));
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", ((TextView)rootView.findViewById(R.id.text2)).getText()).putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("1").getValue().toString()));
                                 }
                             });
                         }
@@ -181,7 +181,7 @@ public class Start extends Fragment {
                                 public void onSuccess(Uri uri) {
                                     generatedFilePath = uri.toString();
                                     dialog.dismiss();
-                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("2").getValue().toString()));
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", ((TextView)rootView.findViewById(R.id.text3)).getText()).putExtra("url", generatedFilePath).putExtra("key", dataSnapshot.child("2").getValue().toString()));
                                 }
                             });
                         }

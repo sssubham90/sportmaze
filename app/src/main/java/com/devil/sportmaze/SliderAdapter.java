@@ -107,7 +107,7 @@ public class SliderAdapter extends PagerAdapter {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        view.addView(myImageLayout,position);
+        view.addView(myImageLayout);
         return myImageLayout;
     }
 
