@@ -79,7 +79,7 @@ public class SliderAdapter extends PagerAdapter {
                             @Override
                             public void onSuccess(final Uri uri) {
                                 DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Video");
-                                myRef.addValueEventListener(new ValueEventListener() {
+                                myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         name = dataSnapshot.child(key).child("Name").getValue().toString();

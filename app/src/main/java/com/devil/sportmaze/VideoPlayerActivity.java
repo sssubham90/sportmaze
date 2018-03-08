@@ -3,12 +3,17 @@ package com.devil.sportmaze;
 import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -57,22 +62,45 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     String getTime(int s){
-        int m = s/600000;
+        int m = s/60000;
         s = (s-(m*60000))/1000;
-        return String.format("%dm:%ds",m,s);
+        return String.format("%dm:%02ds",m,s);
     }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK  && event.getRepeatCount() == 0) {
+            Log.d("CDA", "onKeyDown Called");
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
     @Override
     public void onBackPressed() {
+        Log.d("CDA", "onBackPressed Called");
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String date = df.format(c);
         String msg = getTime(videoView.getCurrentPosition())+"/"+getTime(videoView.getDuration());
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
         if(user.getEmail()!=null){
             myRef.child("Users").child(user.getDisplayName()+"("+user.getEmail().substring(0,user.getEmail().indexOf('@'))+")").child(date).child(name).setValue(msg);
-            myRef.child("Video").child(user.getDisplayName()).child(date).child(name).setValue(msg);
+            myRef.child("Video").child(key).child("Viewers").child(user.getDisplayName()).setValue(msg).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    dialog.dismiss();
+                    finish();
+                }
+            });
         }
-        finish();
+        else finish();
     }
 }
