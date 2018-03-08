@@ -14,10 +14,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class VideoPlayerActivity extends AppCompatActivity {
 
     private VideoView videoView;
-    String key;
+    String key,name;
     FirebaseUser user;
     private ProgressDialog dialog;
 
@@ -27,7 +31,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_player);
         if(getSupportActionBar()!=null)
             getSupportActionBar().hide();
-        String url,name;
+        String url;
         user = FirebaseAuth.getInstance().getCurrentUser();
         url = getIntent().getStringExtra("url");
         name = getIntent().getStringExtra("name");
@@ -60,11 +64,15 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+        String date = df.format(c);
         String msg = getTime(videoView.getCurrentPosition())+"/"+getTime(videoView.getDuration());
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Video");
-        if(user.getDisplayName()!=null)
-            myRef.child(key).child("Viewers").child(user.getDisplayName()).setValue(msg);
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+        if(user.getEmail()!=null){
+            myRef.child("Users").child(user.getDisplayName()+"("+user.getEmail().substring(0,user.getEmail().indexOf('@'))+")").child(date).child(name).setValue(msg);
+            myRef.child("Video").child(user.getDisplayName()).child(date).child(name).setValue(msg);
+        }
         finish();
     }
 }

@@ -100,7 +100,7 @@ public class Start extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int i = 0;
-                for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
+                for(final DataSnapshot childSnapshot:dataSnapshot.getChildren()){
                     if(i==3) break;
                     final String key = childSnapshot.getKey();
                     GlideApp.with(getActivity())
@@ -121,7 +121,7 @@ public class Start extends Fragment {
                                 public void onSuccess(Uri uri) {
                                     generatedFilePath = uri.toString();
                                     dialog.dismiss();
-                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", key));
+                                    getActivity().startActivity(new Intent(getActivity(), VideoPlayerActivity.class).putExtra("name", "").putExtra("url", generatedFilePath).putExtra("key", key).putExtra("name",childSnapshot.child("Name").getValue().toString()));
                                 }
                             });
                         }
