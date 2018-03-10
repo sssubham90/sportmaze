@@ -12,9 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +35,7 @@ import java.util.TimerTask;
 
 import me.relex.circleindicator.CircleIndicator;
 
-public class Start extends Fragment {
+public class Start extends Fragment implements RewardedVideoAdListener{
 
     private ViewPager mPager;
     private int currentPage=0,value;
@@ -41,11 +47,26 @@ public class Start extends Fragment {
     private ProgressDialog dialog;
     private ImageView[] imageViews;
     private TextView[] textViews;
+    RewardedVideoAd mAd;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_start, container, false);
+        MobileAds.initialize(getActivity(),getString(R.string.reward1));
+        mAd = MobileAds.getRewardedVideoAdInstance(getActivity());
+        mAd.setRewardedVideoAdListener(this);
+        mAd.loadAd(getString(R.string.reward1),new AdRequest.Builder().build());
+        ImageView mImage = (ImageView)rootView.findViewById(R.id.image4);
+        mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mAd.isLoaded()){
+                    mAd.show();
+                }
+            }
+        });
+
         rootView.findViewById(R.id.more).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,4 +158,38 @@ public class Start extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onRewardedVideoAdLoaded() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+
+    }
+
+    @Override
+    public void onRewardedVideoStarted() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+
+    }
+
+    @Override
+    public void onRewarded(RewardItem rewardItem) {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int i) {
+
+    }
 }
