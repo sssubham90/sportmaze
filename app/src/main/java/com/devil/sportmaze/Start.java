@@ -57,7 +57,7 @@ public class Start extends Fragment implements RewardedVideoAdListener{
         mAd = MobileAds.getRewardedVideoAdInstance(getActivity());
         mAd.setRewardedVideoAdListener(this);
         mAd.loadAd(getString(R.string.reward1),new AdRequest.Builder().build());
-        ImageView mImage = (ImageView)rootView.findViewById(R.id.image4);
+        ImageView mImage = rootView.findViewById(R.id.image4);
         mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
