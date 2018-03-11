@@ -59,7 +59,6 @@ public class SliderAdapter extends PagerAdapter {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final String key = dataSnapshot.child(String.valueOf(position)).getValue().toString();
-                Log.d("t0ttt",key);
                 GlideApp.with(context)
                         .load(storageReference.child("Images").child(key).child("thumbnail.png"))
                         .into(myImage);
