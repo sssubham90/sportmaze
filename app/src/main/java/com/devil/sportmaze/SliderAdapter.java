@@ -29,13 +29,10 @@ public class SliderAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private Context context;
     private int value;
-    private String generatedFilePath;
     private String name;
-    private String key;
-    private ImageView myImage;
     private ProgressDialog dialog;
 
-    public SliderAdapter(Context context, int value) {
+    SliderAdapter(Context context, int value) {
         this.context = context;
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference("Featured Videos");
@@ -57,11 +54,11 @@ public class SliderAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup view, final int position) {
         View myImageLayout = inflater.inflate(R.layout.slide, view, false);
-        myImage = myImageLayout.findViewById(R.id.image);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        final ImageView myImage = myImageLayout.findViewById(R.id.image);
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                key = dataSnapshot.child(String.valueOf(position)).getValue().toString();
+                final String key = dataSnapshot.child(String.valueOf(position)).getValue().toString();
                 Log.d("t0ttt",key);
                 GlideApp.with(context)
                         .load(storageReference.child("Images").child(key).child("thumbnail.png"))
@@ -83,7 +80,7 @@ public class SliderAdapter extends PagerAdapter {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         name = dataSnapshot.child(key).child("Name").getValue().toString();
-                                        generatedFilePath = uri.toString(); /// The string(file link) that you need
+                                        String generatedFilePath = uri.toString(); /// The string(file link) that you need
                                         dialog.dismiss();
                                         context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("url", generatedFilePath).putExtra("name",name).putExtra("key",key));
                                     }
