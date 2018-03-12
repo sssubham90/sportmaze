@@ -7,21 +7,24 @@
     tools:context="com.devil.sportmaze.LoginActivity">
 
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:text="SportMaze"
-        android:textSize="24sp"
+        android:background="#8ebb4e"
         android:gravity="center_horizontal"
         android:padding="8dp"
-        android:background="#20d200" />
+        android:text="SportMaze"
+        android:textColor="?android:attr/colorForeground"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/name"
-        android:layout_margin="4dp"
-        android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="108dp"
         android:hint="Name"
         android:inputType="textEmailAddress"
         android:maxLines="1"
