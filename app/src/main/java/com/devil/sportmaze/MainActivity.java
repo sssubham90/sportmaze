@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         if(user == null)
             startActivity(new Intent(MainActivity.this,LoginActivity.class));
         if(getSupportActionBar()!=null)
+            getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = findViewById(R.id.container);
