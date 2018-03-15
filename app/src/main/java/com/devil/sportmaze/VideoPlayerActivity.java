@@ -116,6 +116,9 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 }
             });
         }
-        else finish();
+        else {
+            dialog.dismiss();
+            finish();
+        }
     }
 }
