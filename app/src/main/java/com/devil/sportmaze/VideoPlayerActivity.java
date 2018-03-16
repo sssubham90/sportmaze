@@ -61,9 +61,23 @@ public class VideoPlayerActivity extends AppCompatActivity {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
                 dialog.dismiss();
+                videoView.seekTo(100);
                 videoView.start();
             }
         });
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videoView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        videoView.resume();
     }
 
     String getTime(int s){
@@ -81,14 +95,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-
     @Override
     public void onBackPressed() {
         Log.d("CDA", "onBackPressed Called");
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
         String date = df.format(c);
-        final String msg = getTime(videoView.getCurrentPosition())+"/"+getTime(videoView.getDuration());
+        final String msg = getTime((videoView.getCurrentPosition()!=0)?videoView.getCurrentPosition():videoView.getDuration())+"/"+getTime(videoView.getDuration());
         myRef = FirebaseDatabase.getInstance().getReference();
         dialog = new ProgressDialog(this);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
